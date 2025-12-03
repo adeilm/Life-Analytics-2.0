@@ -19,11 +19,7 @@ The main goal is to centralize **habit, health, study, and activity data** into 
 - ✅ Provide **analytics endpoints** (time spent, trends, completions).
 - ✅ Design the system as **microservice-oriented**, even if the first version is a modular monolith.
 - ✅ Prepare a **NoSQL version** (MongoDB) with aggregation pipelines.
-- ✅ Optionally integrate with **Google Calendar** for automatic event import.
-
-This is both:
-- a **course project** (Service Web + NoSQL), and  
-- a **CV-ready personal project** for data engineering & backend development.
+- ✅ Integrate with **Google Calendar** for automatic event import.
 
 ---
 
@@ -34,7 +30,7 @@ This is both:
 Core ideas:
 
 1. **Tracking**  
-   Log what you do: habits, health metrics, study sessions, activities.
+   Log what you do: Goals, habits, health metrics, study sessions, activities.
 
 2. **Calendar Integration**  
    Import events (e.g. from Google Calendar) and link them to activities/study sessions.
