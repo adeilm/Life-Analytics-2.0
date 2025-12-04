@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0
+                             https://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         1. PROJECT COORDINATES
+         ═══════════════════════════════════════════════════════════════════
+         groupId    : Unique identifier for your organization/project group
+         artifactId : The name of this specific project/module
+         version    : Current version (SNAPSHOT = in development)
+    -->
+    <groupId>com.dali</groupId>
+    <artifactId>life-analytics</artifactId>
+    <version>2.0.0-SNAPSHOT</version>
+    <packaging>jar</packaging>
+
+    <name>Life Analytics 2.0</name>
+    <description>Personal Life OS backend for Dali – habit, health, calendar, and analytics tracking</description>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         2. SPRING BOOT PARENT
+         ═══════════════════════════════════════════════════════════════════
+         Inheriting from spring-boot-starter-parent gives us:
+         • Sensible default dependency versions (no need to specify versions)
+         • Plugin management (spring-boot-maven-plugin, etc.)
+         • Default resource filtering and encoding (UTF-8)
+    -->
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>3.2.5</version>
+        <relativePath/> <!-- lookup parent from Maven Central -->
+    </parent>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         3. PROPERTIES
+         ═══════════════════════════════════════════════════════════════════
+         java.version : Tells the compiler which Java version to target.
+                        Spring Boot 3.x requires Java 17+.
+    -->
+    <properties>
+        <java.version>17</java.version>
+    </properties>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         4. DEPENDENCIES
+         ═══════════════════════════════════════════════════════════════════
+         Each <dependency> block pulls in a library.
+         • scope=compile (default) : available at compile + runtime
+         • scope=runtime           : only at runtime (e.g., JDBC drivers)
+         • scope=test              : only for tests
+         • optional=true           : not transitive, dev convenience
+    -->
+    <dependencies>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             SPRING WEB
+             Provides: @RestController, @RequestMapping, embedded Tomcat
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             SPRING DATA JPA
+             Provides: JpaRepository, @Entity, Hibernate as the JPA provider
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa</artifactId>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             BEAN VALIDATION
+             Provides: @NotNull, @Size, @Valid, etc. for request validation
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-validation</artifactId>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             MYSQL DRIVER
+             JDBC driver to connect to MySQL. Only needed at runtime.
+        -->
+        <dependency>
+            <groupId>com.mysql</groupId>
+            <artifactId>mysql-connector-j</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             H2 DATABASE (in-memory)
+             Great for local development and tests – no external DB needed.
+             We'll use profiles to switch between H2 (dev) and MySQL (prod).
+        -->
+        <dependency>
+            <groupId>com.h2database</groupId>
+            <artifactId>h2</artifactId>
+            <scope>runtime</scope>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             LOMBOK
+             Reduces boilerplate: @Data, @Builder, @NoArgsConstructor, etc.
+             Requires Lombok plugin in your IDE (VS Code, IntelliJ).
+        -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             DEV TOOLS
+             Auto-restart on file changes, LiveReload support.
+             Only active in development, automatically disabled in prod JAR.
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-devtools</artifactId>
+            <scope>runtime</scope>
+            <optional>true</optional>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
+             TESTING
+             Provides: JUnit 5, Mockito, Spring Test, @SpringBootTest
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
+    </dependencies>
+
+    <!-- ═══════════════════════════════════════════════════════════════════
+         5. BUILD PLUGINS
+         ═══════════════════════════════════════════════════════════════════
+         spring-boot-maven-plugin : packages the app as an executable JAR
+                                    and provides `mvn spring-boot:run`
+    -->
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <!-- Exclude Lombok from the final JAR (it's compile-time only) -->
+                    <excludes>
+                        <exclude>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                        </exclude>
+                    </excludes>
+                </configuration>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>

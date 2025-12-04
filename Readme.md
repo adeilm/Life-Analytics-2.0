@@ -1,12 +1,12 @@
-# Life Analytics 2.0 – Personal Analytics Workbench
+# Life Analytics 2.0 – Personal Life OS for Dali
 
-Life Analytics 2.0 is a **personal analytics backend** built with:
+Life Analytics 2.0 is a **personal analytics backend** built for **one user (Dali)** to centralize and analyze daily life data.
 
-- **Spring Boot + Maven**
-- **MySQL (SQL version – Service Web project)**
-- (Later) **MongoDB (NoSQL project)**
-- (Later) **Google Calendar integration**
-- (Later) **Data engineering + AI insights layer**
+**Tech Stack:**
+- **Spring Boot + Maven** (REST backend)
+- **MySQL** (relational database)
+- **Gemini API (free tier)** for natural-language → JSON translation
+- **Google Calendar integration** (export `.ics`, optional sync)
 
 The main goal is to centralize **habit, health, study, and activity data** into one backend and expose **REST APIs** and **analytics endpoints** that can feed dashboards or future mobile/web apps.
 
@@ -18,24 +18,27 @@ The main goal is to centralize **habit, health, study, and activity data** into 
 - ✅ Model life data (habits, health, study sessions, events) in a **relational schema**.
 - ✅ Provide **analytics endpoints** (time spent, trends, completions).
 - ✅ Design the system as **microservice-oriented**, even if the first version is a modular monolith.
-- ✅ Prepare a **NoSQL version** (MongoDB) with aggregation pipelines.
-- ✅ Integrate with **Google Calendar** for automatic event import.
+- ✅ Integrate **Gemini API (free tier)** for natural-language daily-log ingestion.
+- ✅ Integrate with **Google Calendar** for automatic event import/export.
 
 ---
 
 ## 2. High-Level Concept
 
-> _“Personal analytics workbench that aggregates calendar data and personal logs (habits, health, study, activities) and exposes insight endpoints.”_
+> _"A personal life OS for Dali: centralize calendar data and personal logs (habits, health, study, activities), talk to Gemini to log your day in natural language, and get insight endpoints."_
 
 Core ideas:
 
 1. **Tracking**  
    Log what you do: Goals, habits, health metrics, study sessions, activities.
 
-2. **Calendar Integration**  
-   Import events (e.g. from Google Calendar) and link them to activities/study sessions.
+2. **AI Intake (Gemini)**  
+   Describe your day in plain language → Gemini converts it to structured JSON → backend ingests it.
 
-3. **Analytics**  
+3. **Calendar Integration**  
+   Import/export events (Google Calendar) and link them to activities/study sessions.
+
+4. **Analytics**  
    Compute aggregated statistics:
    - time spent per activity type
    - study load per day/week/course
@@ -48,7 +51,7 @@ Core ideas:
 
 ### 3.1 Logical Services (microservice-oriented design)
 
-The system is split conceptually into three services:
+The system is split conceptually into four services:
 
 1. **Tracking Service**
    - Manages:
@@ -70,9 +73,14 @@ The system is split conceptually into three services:
      - habit completion rates
      - health trends
 
+4. **Intake Service (Gemini-powered)**
+   - Receives natural-language daily logs.
+   - Calls Gemini API to convert text → structured JSON.
+   - Dispatches parsed data to Tracking and Calendar services.
+
 Implementation strategy:
 - **Phase 1:** Modular monolith (one Spring Boot app) with clear packages:  
-  `tracking.*`, `calendar.*`, `analytics.*`
+  `tracking.*`, `calendar.*`, `analytics.*`, `intake.*`
 - **Phase 2 (optional):** Extract Calendar into a separate Spring Boot microservice.
 
 ---
@@ -123,7 +131,7 @@ Implementation strategy:
 - `tags` (stored as simple string or separate table)
 - `note` (optional)
 
-*(Optional later: `User`, `Course`, `Tag`, etc.)*
+*(Single-user system – personalized for Dali, no multi-user support needed.)*
 
 ---
 
@@ -237,15 +245,13 @@ You can start with simple SQL `GROUP BY` queries and enrich later.
   - JSON input/output
   - DB access via JPA
   - Testing with Postman
-- Optionally shows microservice-ready design (clear separation of Tracking / Calendar / Analytics layers).
+- Optionally shows microservice-ready design (clear separation of Tracking / Calendar / Analytics / Intake layers).
 
-### 7.2 NoSQL version (MongoDB – separate project)
+### 7.2 Gemini Integration
 
-- Same “Life Analytics 2.0” concept.
-- Unified `events` collection storing different event types (habit logs, health logs, calendar events, activity logs).
-- Heavy use of **aggregation pipelines**:
-  - `$match`, `$group`, `$project`, `$sort`, `$bucket`, etc.
-- Good playground for data engineering concepts.
+- Use **Gemini free-tier API** to convert natural-language daily descriptions into structured JSON.
+- Backend validates and ingests the JSON via `/api/intake/daily-log`.
+- Keep API key in environment variable (`GEMINI_API_KEY`), never commit to repo.
 
 ### 7.3 Future extensions
 
