@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Habit Repository
@@ -37,4 +38,10 @@ public interface HabitRepository extends JpaRepository<Habit, Long> {
      * Query: WHERE LOWER(name) LIKE LOWER('%keyword%')
      */
     List<Habit> findByNameContainingIgnoreCase(String keyword);
+
+    /**
+     * Find a habit by exact name (case-insensitive).
+     * Used by intake service to match AI-generated habit names.
+     */
+    Optional<Habit> findByNameIgnoreCase(String name);
 }

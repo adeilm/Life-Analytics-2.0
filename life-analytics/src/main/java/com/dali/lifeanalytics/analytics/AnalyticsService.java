@@ -247,7 +247,9 @@ public class AnalyticsService {
                 .sum();
 
         // Upcoming events (today and future)
-        int upcomingEvents = (int) calendarEventRepository.findUpcoming(today).size();
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime nextWeek = now.plusDays(7);
+        int upcomingEvents = (int) calendarEventRepository.findUpcoming(now, nextWeek).size();
 
         DashboardDto.TodaySnapshot snapshot = DashboardDto.TodaySnapshot.builder()
                 .habitsCompletedToday(habitsCompletedToday)
