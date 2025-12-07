@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDate;
 
 /**
- * Combined dashboard overview
+ * Wellness Tracker Dashboard
  */
 @Data
 @Builder
@@ -23,7 +23,6 @@ public class DashboardDto {
     // Weekly summaries
     private WeeklyHabitReportDto habitReport;
     private HealthTrendDto healthTrend;
-    private ActivitySummaryDto activitySummary;
     
     @Data
     @Builder
@@ -34,7 +33,5 @@ public class DashboardDto {
         private Integer habitsTotal;
         private Double sleepLastNight;
         private Integer currentMood;
-        private Integer minutesLoggedToday;
-        private Integer upcomingEventsCount;
     }
 }

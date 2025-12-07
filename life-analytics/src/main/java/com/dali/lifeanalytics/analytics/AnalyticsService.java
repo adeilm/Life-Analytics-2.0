@@ -1,9 +1,6 @@
 package com.dali.lifeanalytics.analytics;
 
 import com.dali.lifeanalytics.analytics.dto.*;
-import com.dali.lifeanalytics.calendar.ActivityLog;
-import com.dali.lifeanalytics.calendar.ActivityLogRepository;
-import com.dali.lifeanalytics.calendar.CalendarEventRepository;
 import com.dali.lifeanalytics.tracking.entity.Habit;
 import com.dali.lifeanalytics.tracking.entity.HealthMetric;
 import com.dali.lifeanalytics.tracking.repository.HabitLogRepository;
@@ -22,9 +19,9 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * Analytics Service
- * ─────────────────
- * Computes statistics, trends, and summaries from tracked data.
+ * Analytics Service - Wellness Tracker
+ * ─────────────────────────────────────
+ * Correlates sleep, mood, and habits.
  */
 @Service
 @RequiredArgsConstructor
@@ -33,12 +30,9 @@ public class AnalyticsService {
     private final HabitRepository habitRepository;
     private final HabitLogRepository habitLogRepository;
     private final HealthMetricRepository healthMetricRepository;
-    private final ActivityLogRepository activityLogRepository;
-    private final CalendarEventRepository calendarEventRepository;
 
     /**
-     * Get weekly habit completion report.
-     * Week starts on Monday.
+     * Weekly habit completion report.
      */
     public WeeklyHabitReportDto getWeeklyHabitReport() {
         LocalDate today = LocalDate.now();
@@ -58,7 +52,6 @@ public class AnalyticsService {
             int target = habit.getTargetPerWeek() != null ? habit.getTargetPerWeek() : 7;
             double rate = target > 0 ? Math.min(1.0, (double) completed / target) : 1.0;
 
-            // Calculate streak
             int streak = calculateStreak(habit.getId());
 
             HabitStatsDto stats = HabitStatsDto.builder()
@@ -67,7 +60,7 @@ public class AnalyticsService {
                     .category(habit.getCategory())
                     .targetPerWeek(target)
                     .completedThisWeek((int) completed)
-                    .completionRate(Math.round(rate * 100.0) / 100.0)
+                    .completionRate(round2(rate))
                     .currentStreak(streak)
                     .build();
 
@@ -85,20 +78,19 @@ public class AnalyticsService {
                 .weekStart(weekStart)
                 .weekEnd(weekEnd)
                 .totalHabits(habits.size())
-                .overallCompletionRate(Math.round(overallRate * 100.0) / 100.0)
+                .overallCompletionRate(round2(overallRate))
                 .habits(habitStats)
                 .build();
     }
 
     /**
-     * Calculate current streak (consecutive days) for a habit.
+     * Calculate streak for a habit.
      */
     private int calculateStreak(Long habitId) {
         LocalDate today = LocalDate.now();
         int streak = 0;
         LocalDate checkDate = today;
 
-        // Look back up to 365 days
         for (int i = 0; i < 365; i++) {
             List<?> logs = habitLogRepository.findByHabitIdAndLogDate(habitId, checkDate);
             if (!logs.isEmpty()) {
@@ -112,7 +104,7 @@ public class AnalyticsService {
     }
 
     /**
-     * Get health trends for the last N days.
+     * Health trends for the last N days.
      */
     public HealthTrendDto getHealthTrend(int days) {
         LocalDate endDate = LocalDate.now();
@@ -124,7 +116,6 @@ public class AnalyticsService {
         List<HealthMetric> metrics = healthMetricRepository
                 .findByRecordedAtBetweenOrderByRecordedAtDesc(startDateTime, endDateTime);
 
-        // Calculate averages
         Double avgSleep = metrics.stream()
                 .filter(m -> m.getSleepHours() != null)
                 .mapToDouble(HealthMetric::getSleepHours)
@@ -145,11 +136,10 @@ public class AnalyticsService {
                 .mapToInt(HealthMetric::getEnergyLevel)
                 .average().orElse(0.0);
 
-        // Build daily data (most recent metric per day)
         List<HealthTrendDto.DailyHealthDto> dailyData = metrics.stream()
                 .collect(Collectors.groupingBy(
                         m -> m.getRecordedAt().toLocalDate(),
-                        Collectors.reducing((a, b) -> 
+                        Collectors.reducing((a, b) ->
                                 a.getRecordedAt().isAfter(b.getRecordedAt()) ? a : b)))
                 .values().stream()
                 .filter(opt -> opt.isPresent())
@@ -179,53 +169,14 @@ public class AnalyticsService {
     }
 
     /**
-     * Get activity summary for the last N days.
-     */
-    public ActivitySummaryDto getActivitySummary(int days) {
-        LocalDate endDate = LocalDate.now();
-        LocalDate startDate = endDate.minusDays(days - 1);
-
-        List<Object[]> categoryData = activityLogRepository
-                .weeklyBreakdownByCategory(startDate, endDate);
-
-        int totalMinutes = 0;
-        List<ActivitySummaryDto.CategoryBreakdown> breakdowns = new ArrayList<>();
-
-        for (Object[] row : categoryData) {
-            String category = (String) row[0];
-            int minutes = ((Number) row[1]).intValue();
-            totalMinutes += minutes;
-
-            breakdowns.add(ActivitySummaryDto.CategoryBreakdown.builder()
-                    .category(category)
-                    .minutes(minutes)
-                    .hours(round2(minutes / 60.0))
-                    .build());
-        }
-
-        // Calculate percentages
-        final int total = totalMinutes;
-        breakdowns.forEach(b -> 
-                b.setPercentage(total > 0 ? round2(b.getMinutes() * 100.0 / total) : 0.0));
-
-        return ActivitySummaryDto.builder()
-                .startDate(startDate)
-                .endDate(endDate)
-                .totalMinutes(totalMinutes)
-                .totalHours(round2(totalMinutes / 60.0))
-                .byCategory(breakdowns)
-                .build();
-    }
-
-    /**
-     * Get combined dashboard data.
+     * Dashboard: today's snapshot + trends.
      */
     public DashboardDto getDashboard() {
         LocalDate today = LocalDate.now();
         LocalDateTime todayStart = today.atStartOfDay();
         LocalDateTime todayEnd = today.atTime(LocalTime.MAX);
 
-        // Today's habits
+        // Today's habits completed
         List<Habit> allHabits = habitRepository.findAll();
         int habitsCompletedToday = 0;
         for (Habit h : allHabits) {
@@ -234,30 +185,16 @@ public class AnalyticsService {
             }
         }
 
-        // Today's health metric (most recent)
+        // Latest health metric
         List<HealthMetric> todayMetrics = healthMetricRepository
                 .findByRecordedAtBetweenOrderByRecordedAtDesc(todayStart, todayEnd);
         HealthMetric latestHealth = todayMetrics.isEmpty() ? null : todayMetrics.get(0);
-
-        // Today's activities
-        List<ActivityLog> todayActivities = activityLogRepository.findToday();
-        int minutesToday = todayActivities.stream()
-                .filter(a -> a.getDurationMinutes() != null)
-                .mapToInt(ActivityLog::getDurationMinutes)
-                .sum();
-
-        // Upcoming events (today and future)
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime nextWeek = now.plusDays(7);
-        int upcomingEvents = (int) calendarEventRepository.findUpcoming(now, nextWeek).size();
 
         DashboardDto.TodaySnapshot snapshot = DashboardDto.TodaySnapshot.builder()
                 .habitsCompletedToday(habitsCompletedToday)
                 .habitsTotal(allHabits.size())
                 .sleepLastNight(latestHealth != null ? latestHealth.getSleepHours() : null)
                 .currentMood(latestHealth != null ? latestHealth.getMoodScore() : null)
-                .minutesLoggedToday(minutesToday)
-                .upcomingEventsCount(upcomingEvents)
                 .build();
 
         return DashboardDto.builder()
@@ -265,7 +202,6 @@ public class AnalyticsService {
                 .today(snapshot)
                 .habitReport(getWeeklyHabitReport())
                 .healthTrend(getHealthTrend(7))
-                .activitySummary(getActivitySummary(7))
                 .build();
     }
 

@@ -6,15 +6,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 /**
- * Analytics Controller
- * ────────────────────
- * REST endpoints for analytics, trends, and dashboard.
+ * Analytics Controller - Wellness Tracker
+ * ────────────────────────────────────────
+ * REST endpoints for habit and health analytics.
  *
  * Endpoints:
- *   GET /api/analytics/habits/weekly     - Weekly habit completion report
- *   GET /api/analytics/health/trend      - Health metrics trend (default 7 days)
- *   GET /api/analytics/activities/summary - Activity time breakdown
- *   GET /api/analytics/dashboard         - Combined dashboard overview
+ *   GET /api/analytics/habits/weekly  - Weekly habit completion report
+ *   GET /api/analytics/health/trend   - Health metrics trend
+ *   GET /api/analytics/dashboard      - Combined dashboard overview
  */
 @RestController
 @RequestMapping("/api/analytics")
@@ -34,24 +33,12 @@ public class AnalyticsController {
 
     /**
      * GET /api/analytics/health/trend?days=7
-     * Returns health metrics trend.
-     * @param days Number of days to analyze (default 7)
+     * Returns health metrics trend (sleep, mood, stress, energy).
      */
     @GetMapping("/health/trend")
     public ResponseEntity<HealthTrendDto> getHealthTrend(
             @RequestParam(defaultValue = "7") int days) {
         return ResponseEntity.ok(analyticsService.getHealthTrend(days));
-    }
-
-    /**
-     * GET /api/analytics/activities/summary?days=7
-     * Returns time spent per activity category.
-     * @param days Number of days to analyze (default 7)
-     */
-    @GetMapping("/activities/summary")
-    public ResponseEntity<ActivitySummaryDto> getActivitySummary(
-            @RequestParam(defaultValue = "7") int days) {
-        return ResponseEntity.ok(analyticsService.getActivitySummary(days));
     }
 
     /**

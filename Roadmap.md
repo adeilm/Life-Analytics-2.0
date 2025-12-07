@@ -1,373 +1,162 @@
-# Life Analytics 2.0
+# Wellness Tracker - Development Roadmap
 
-A comprehensive life tracking and analytics platform built with Spring Boot and MySQL, designed to help users monitor habits, health metrics, calendar events, tasks, expenses, and activities with intelligent analytics.
+## Project Overview
 
----
+**Goal**: A backend to correlate sleep and mood with daily habits.
 
-## Table of Contents
-
-- [Overview](#overview)
-- [Tech Stack](#tech-stack)
-- [Getting Started](#getting-started)
-- [Project Structure](#project-structure)
-- [Development Roadmap](#development-roadmap)
-- [API Endpoints](#api-endpoints)
-- [Future Work](#future-work)
+**Domain**: Personal wellness tracking
 
 ---
 
-## Overview
+## Current Status ✅
 
-Life Analytics 2.0 is a Service Web project that provides REST APIs for tracking and analyzing personal data across multiple domains:
+### Implemented
 
-- **Habit Tracking**: Create habits, log completions, and track progress ✅
-- **Health Metrics**: Monitor mood, stress, energy levels, and other wellness indicators ✅
-- **Calendar Integration**: Sync and manage calendar events with ICS export ✅
-- **Activity Logging**: Record and categorize daily activities ✅
-- **Task Management**: Track todos with priorities and due dates ✅
-- **Expense Tracking**: Monitor spending by category ✅
-- **Course & Exam Management**: Academic tracking ✅
-- **Goal Tracking**: Set and track personal goals ✅
-- **AI Intake**: Process daily logs from AI assistants ✅
-- **Analytics**: Generate insights and trends from tracked data ✅
+| Feature | Status | Description |
+|---------|--------|-------------|
+| Habits | ✅ Done | CRUD + daily logging |
+| Habit Logs | ✅ Done | Track completions with notes |
+| Health Metrics | ✅ Done | Sleep, mood, stress, energy |
+| Weekly Report | ✅ Done | Habit completion stats |
+| Health Trends | ✅ Done | Average metrics over time |
+| Dashboard | ✅ Done | Combined overview |
 
 ---
 
 ## Tech Stack
 
-- **Backend**: Spring Boot 3.2.5 (Java 17)
-- **Java**: Zulu OpenJDK 17 (LTS)
-- **Database**: MySQL 8.0+
-- **Build Tool**: Maven
-- **ORM**: Spring Data JPA with Jakarta EE
-- **API Testing**: Postman
-- **IDE**: VS Code with Java Extension Pack
+- **Java 17** (Zulu OpenJDK)
+- **Spring Boot 3.2.5**
+- **MySQL 8.0**
+- **Maven**
 
 ---
 
-## Getting Started
+## API Summary
 
-### Prerequisites
+### Core Endpoints (15 total)
 
-1. **JDK 17 or 21** - Verify with `java -version`
-2. **Maven** - Verify with `mvn -v`
-3. **MySQL 8.0+** and MySQL Workbench
-4. **Postman** for API testing
-5. **VS Code** with extensions:
-   - Java Extension Pack
-   - Spring Boot Tools
-   - Maven for Java
+**Habits (7)**
+- `GET /api/habits` - List habits
+- `GET /api/habits/{id}` - Get habit
+- `POST /api/habits` - Create habit
+- `PUT /api/habits/{id}` - Update habit
+- `DELETE /api/habits/{id}` - Delete habit
+- `POST /api/habits/{id}/logs` - Log completion
+- `GET /api/habits/{id}/logs` - Get logs
 
-### Database Setup
+**Health Metrics (5)**
+- `GET /api/health-metrics` - List all
+- `GET /api/health-metrics/{id}` - Get one
+- `POST /api/health-metrics` - Create
+- `PUT /api/health-metrics/{id}` - Update
+- `DELETE /api/health-metrics/{id}` - Delete
 
-```sql
-CREATE DATABASE life_analytics_db;
+**Analytics (3)**
+- `GET /api/analytics/habits/weekly` - Weekly report
+- `GET /api/analytics/health/trend` - Health trends
+- `GET /api/analytics/dashboard` - Dashboard
+
+---
+
+## Presentation Demo Flow
+
+### Scenario: "Does Sleep Affect My Mood?"
+
+**Step 1**: Create habits
+```bash
+POST /api/habits
+{ "name": "Exercise", "category": "HEALTH", "targetPerWeek": 5 }
 ```
 
-### Application Configuration
+**Step 2**: Log health data over several days
+```bash
+POST /api/health-metrics
+{ "sleepHours": 6.0, "moodScore": 5, "energyLevel": 4 }  # Bad sleep day
 
-Create `application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/life_analytics_db
-spring.datasource.username=your_username
-spring.datasource.password=your_password
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-server.port=8080
+POST /api/health-metrics
+{ "sleepHours": 8.0, "moodScore": 8, "energyLevel": 8 }  # Good sleep day
 ```
 
-### Running the Application
+**Step 3**: Log habit completions
+```bash
+POST /api/habits/1/logs
+{ "value": 1, "note": "Morning run" }
+```
+
+**Step 4**: View analytics
+```bash
+GET /api/analytics/dashboard
+```
+→ Shows correlation between sleep and mood!
+
+---
+
+## Future Enhancements (Parked)
+
+These features are designed but not active:
+- 📅 Calendar integration & Google sync
+- 💰 Expense tracking
+- 📚 Course & exam management
+- ✅ Task management
+- 🎯 Goal tracking with progress
+- 🤖 AI intake for natural language logging
+
+*Will implement when project matures.*
+
+---
+
+## Files Structure
+
+```
+life-analytics/
+├── src/main/java/com/dali/lifeanalytics/
+│   ├── LifeAnalyticsApplication.java
+│   │
+│   ├── tracking/           # Core domain
+│   │   ├── entity/
+│   │   │   ├── Habit.java
+│   │   │   ├── HabitLog.java
+│   │   │   └── HealthMetric.java
+│   │   ├── repository/
+│   │   ├── service/
+│   │   └── controller/
+│   │
+│   ├── analytics/          # Reports & trends
+│   │   ├── AnalyticsController.java
+│   │   ├── AnalyticsService.java
+│   │   └── dto/
+│   │
+│   └── config/             # Health check
+│
+└── pom.xml
+```
+
+---
+
+## Key Points for Presentation
+
+1. **Simple Domain**: Habits + Health = Wellness correlation
+2. **Clean REST API**: Standard CRUD + analytics
+3. **Spring Boot 3.x**: Modern Java 17 with Jakarta EE
+4. **MySQL**: Relational data with JPA
+5. **Analytics**: Real insights from data
+
+---
+
+## Quick Commands
 
 ```bash
-# Set Java 17 (PowerShell)
-$env:JAVA_HOME = "C:\Program Files\Zulu\zulu-17"
-$env:PATH = "$env:JAVA_HOME\bin;$env:PATH"
+# Compile
+mvn clean compile
 
-# Build and run
-mvn clean install
+# Run
 mvn spring-boot:run
-```
 
-Verify installation: `GET http://localhost:8080/ping` → should return "OK"
-
----
-
-## Project Structure
-
-```
-com.dali.lifeanalytics
-├── tracking/
-│   ├── entity/
-│   │   ├── Habit, HabitLog
-│   │   ├── HealthMetric
-│   │   ├── Task          ← NEW
-│   │   ├── Expense       ← NEW
-│   │   ├── Course, Exam  ← NEW
-│   │   └── Goal, GoalProgress ← NEW
-│   ├── repository/
-│   ├── service/
-│   └── controller/
-├── calendar/
-│   ├── CalendarEvent
-│   ├── ActivityLog
-│   ├── CalendarExportService  ← NEW (ICS export)
-│   └── controllers
-├── analytics/
-│   ├── dto/ (DashboardDto, etc.)
-│   ├── AnalyticsService
-│   └── AnalyticsController
-└── intake/                    ← NEW MODULE
-    ├── dto/ (DailyLogDto, IntakeResultDto)
-    ├── IntakeService
-    └── IntakeController
+# Test health
+curl http://localhost:8080/api/health
 ```
 
 ---
 
-## Development Roadmap
-
-### Phase 1: Environment Setup ✅ COMPLETE
-- Install and configure development tools
-- Set up MySQL database
-- Verify Spring Boot can connect to database
-
-### Phase 2: Define MVP Scope ✅ COMPLETE
-**Implemented:**
-- Habit tracking with logs ✅
-- Health metrics recording ✅
-- Calendar events with ICS export ✅
-- Activity logs ✅
-- Task management ✅
-- Expense tracking ✅
-- Course & Exam management ✅
-- Goal tracking ✅
-- AI Intake module ✅
-
-### Phase 3: Database Schema Design ✅ COMPLETE
-Implemented tables:
-- `habit`, `habit_log` - Habit tracking
-- `health_metric` - Wellness measurements
-- `calendar_event` - Time-based events
-- `activity_log` - Categorized activities
-- `task` - Todo items with status/priority ✅ NEW
-- `expense` - Financial tracking ✅ NEW
-- `course`, `exam` - Academic tracking ✅ NEW
-- `goal`, `goal_progress` - Goal tracking ✅ NEW
-
-### Phase 4: Core Tracking Module ✅ COMPLETE
-**Habits:** CRUD + logs + date range queries ✅
-**Health Metrics:** Record + query by date range ✅
-**Tasks:** CRUD + status/priority filtering ✅
-**Expenses:** CRUD + category filtering + summaries ✅
-
-### Phase 5: Calendar & Activity Module ✅ COMPLETE
-- Manage calendar events ✅
-- ICS export endpoint ✅
-- Conflict detection ✅
-- Log activities with duration and type ✅
-
-### Phase 6: Analytics Endpoints ✅ COMPLETE
-- **Habit Analytics**: Weekly completion rates ✅
-- **Time Analysis**: Duration by activity type ✅
-- **Health Trends**: Average metrics over time ✅
-- **Dashboard**: Combined analytics view ✅
-
-### Phase 7: AI Intake Module ✅ COMPLETE
-- Process daily log JSON from AI ✅
-- Create entities from structured data ✅
-- Schema endpoint for AI reference ✅
-
-### Phase 8: Upgrade to Modern Stack ✅ COMPLETE
-- Java 11 → Java 17 ✅
-- Spring Boot 2.7.18 → 3.2.5 ✅
-- javax.* → jakarta.* migration ✅
-- Java 17 features (records, text blocks) ✅
-
-### Phase 9: Documentation & Testing
-- Complete Postman collection
-- Write technical report
-- Prepare presentation slides
-
----
-
-## API Endpoints
-
-### Habits
-```
-GET    /api/habits
-GET    /api/habits/{id}
-POST   /api/habits
-PUT    /api/habits/{id}
-DELETE /api/habits/{id}
-POST   /api/habits/{id}/logs
-GET    /api/habits/{id}/logs?from=&to=
-```
-
-### Health Metrics
-```
-GET    /api/health-metrics
-POST   /api/health-metrics
-GET    /api/health-metrics?from=&to=
-```
-
-### Tasks (NEW ✅)
-```
-GET    /api/tasks
-GET    /api/tasks/{id}
-POST   /api/tasks
-PUT    /api/tasks/{id}
-DELETE /api/tasks/{id}
-GET    /api/tasks/status/{status}
-GET    /api/tasks/priority/{priority}
-GET    /api/tasks/overdue
-```
-
-### Expenses (NEW ✅)
-```
-GET    /api/expenses
-GET    /api/expenses/{id}
-POST   /api/expenses
-PUT    /api/expenses/{id}
-DELETE /api/expenses/{id}
-GET    /api/expenses/category/{category}
-GET    /api/expenses/range?start=&end=
-GET    /api/expenses/summary?start=&end=
-```
-
-### Courses & Exams (NEW ✅)
-```
-GET    /api/courses
-POST   /api/courses
-GET    /api/courses/{id}/exams
-GET    /api/exams
-POST   /api/exams
-GET    /api/exams/upcoming
-```
-
-### Goals (NEW ✅)
-```
-GET    /api/goals
-POST   /api/goals
-GET    /api/goals/{id}/progress
-POST   /api/goals/{id}/progress
-```
-
-### Calendar Events
-```
-GET    /api/calendar/events?from=&to=
-POST   /api/calendar/events
-GET    /api/calendar/events/export?from=&to=    ← ICS export (NEW ✅)
-POST   /api/calendar/events/check-conflicts     ← Conflict detection (NEW ✅)
-POST   /api/calendar/events/safe                ← Safe create (NEW ✅)
-```
-
-### Activity Logs
-```
-GET    /api/activities
-GET    /api/activities/today
-GET    /api/activities/date/{date}
-POST   /api/activities
-POST   /api/activities/quick
-GET    /api/activities/weekly-breakdown
-```
-
-### AI Intake (NEW ✅)
-```
-POST   /api/intake/daily-log    ← Process AI-generated daily log
-GET    /api/intake/schema       ← Get expected JSON schema
-```
-
-### Analytics
-```
-GET    /api/analytics/habits/weekly?habitId=&weekStart=
-GET    /api/analytics/time-by-activity?from=&to=
-GET    /api/analytics/health/trends?from=&to=
-GET    /api/analytics/dashboard                  ← Full dashboard (NEW ✅)
-```
-
----
-
-## Future Work
-
-### Short Term (Next Steps)
-- [ ] Create Postman collection for all endpoints
-- [ ] Write technical report (compte rendu)
-- [ ] Prepare presentation slides
-- [ ] Add sample data for demo
-- [ ] Implement actual Google Calendar API integration
-
-### Medium Term
-- [ ] Add user authentication and authorization
-- [ ] Create web frontend interface
-- [ ] Add data validation and error handling improvements
-
-### Long Term
-- [ ] NoSQL version using MongoDB for time-series data
-- [ ] AI-powered insights and recommendations
-- [ ] Mobile application
-- [ ] Real-time analytics dashboard
-- [ ] Multi-user support with data privacy
-
----
-
-## Database Schema
-
-```sql
--- Core tables (IMPLEMENTED ✅)
-habit (id, name, category, target_per_week, created_at)
-habit_log (id, habit_id, log_date, value, note, created_at)
-health_metric (id, recorded_at, sleep_hours, mood_score, stress_level, energy_level, note)
-calendar_event (id, title, start_time, end_time, category, completed, ...)
-activity_log (id, activity, category, log_date, duration_minutes, start_time, end_time, ...)
-
--- New tables (IMPLEMENTED ✅)
-task (id, title, description, status, priority, due_date, category, created_at)
-expense (id, amount, category, description, note, date, created_at)
-course (id, code, name, semester, credits, professor, created_at)
-exam (id, course_id, name, date, score, max_score, notes)
-goal (id, title, description, category, target_value, current_value, target_date, status)
-goal_progress (id, goal_id, value, note, recorded_at)
-```
-
-**Key Indexes:**
-- Date/time columns for efficient range queries
-- Foreign keys for referential integrity
-- Category/status columns for filtering queries
-
----
-
-## Contributing
-
-This is an academic project. For the Service Web course evaluation, focus on:
-1. ✅ Stable CRUD operations - DONE
-2. ✅ Clean architecture - DONE
-3. ✅ Multiple working analytics endpoints - DONE
-4. Professional documentation - IN PROGRESS
-
----
-
-## License
-
-Academic project - Nabil OULAHYANE / Dali
-
----
-
-## Notes
-
-**Completed:**
-- ✅ Habits + health metrics + basic analytics
-- ✅ Calendar with ICS export and conflict detection
-- ✅ Task management with priorities
-- ✅ Expense tracking with categories
-- ✅ Course and exam management
-- ✅ Goal tracking with progress
-- ✅ AI intake module for daily logs
-- ✅ Upgraded to Java 17 + Spring Boot 3.2.5
-
-**Next Steps:**
-- Create Postman collection
-- Write technical report
-- Prepare demo presentation
-
-**Project is FEATURE COMPLETE for course submission! 🎉**
+*Keep it simple. Ship it.* 🚀
