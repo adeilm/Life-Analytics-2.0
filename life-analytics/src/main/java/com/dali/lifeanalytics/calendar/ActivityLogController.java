@@ -1,6 +1,6 @@
 package com.dali.lifeanalytics.calendar;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -133,19 +133,5 @@ public class ActivityLogController {
     /**
      * DTO for quick logging
      */
-    static class QuickLogRequest {
-        private String activity;
-        private String category;
-        private int durationMinutes;
-
-        public QuickLogRequest() {}
-
-        public String activity() { return activity; }
-        public String category() { return category; }
-        public int durationMinutes() { return durationMinutes; }
-
-        public void setActivity(String activity) { this.activity = activity; }
-        public void setCategory(String category) { this.category = category; }
-        public void setDurationMinutes(int durationMinutes) { this.durationMinutes = durationMinutes; }
-    }
+    record QuickLogRequest(String activity, String category, int durationMinutes) {}
 }

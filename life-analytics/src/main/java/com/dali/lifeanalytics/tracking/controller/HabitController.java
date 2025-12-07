@@ -4,7 +4,7 @@ import com.dali.lifeanalytics.tracking.entity.Habit;
 import com.dali.lifeanalytics.tracking.entity.HabitLog;
 import com.dali.lifeanalytics.tracking.service.HabitService;
 import com.dali.lifeanalytics.tracking.service.HabitLogService;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

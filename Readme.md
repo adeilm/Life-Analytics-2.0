@@ -3,12 +3,32 @@
 Life Analytics 2.0 is a **personal analytics backend** built for **one user (Dali)** to centralize and analyze daily life data.
 
 **Tech Stack:**
-- **Spring Boot + Maven** (REST backend)
+- **Java 17** (Zulu OpenJDK)
+- **Spring Boot 3.2.5** + Maven (REST backend)
 - **MySQL** (relational database)
 - **Gemini API (free tier)** for natural-language → JSON translation
-- **Google Calendar integration** (export `.ics`, optional sync)
+- **Google Calendar integration** (export `.ics`, conflict detection)
 
-The main goal is to centralize **habit, health, study, and activity data** into one backend and expose **REST APIs** and **analytics endpoints** that can feed dashboards or future mobile/web apps.
+The main goal is to centralize **habit, health, study, expense, task, and activity data** into one backend and expose **REST APIs** and **analytics endpoints** that can feed dashboards or future mobile/web apps.
+
+---
+
+## Current Implementation Status ✅
+
+### Fully Implemented Features:
+
+| Module | Status | Description |
+|--------|--------|-------------|
+| **Habit Tracking** | ✅ Complete | CRUD + daily logs + weekly stats |
+| **Health Metrics** | ✅ Complete | Mood, stress, energy, sleep tracking |
+| **Calendar Events** | ✅ Complete | Events + ICS export + conflict detection |
+| **Activity Logging** | ✅ Complete | Time tracking by category |
+| **Task Management** | ✅ Complete | Todos with priority, status, due dates |
+| **Expense Tracking** | ✅ Complete | Financial tracking with categories |
+| **Course Management** | ✅ Complete | Academic courses + exams |
+| **Goal Tracking** | ✅ Complete | Goals with progress entries |
+| **AI Intake Module** | ✅ Complete | Daily log ingestion from AI |
+| **Analytics Dashboard** | ✅ Complete | Trends, summaries, weekly reports |
 
 ---
 
@@ -144,67 +164,131 @@ Implementation strategy:
 
 #### Habits
 
-- `GET /api/habits`  
-  List all habits.
-
-- `GET /api/habits/{id}`  
-  Get a specific habit.
-
-- `POST /api/habits`  
-  Create a new habit.
-
-- `PUT /api/habits/{id}`  
-  Update a habit.
-
-- `DELETE /api/habits/{id}`  
-  Delete a habit.
-
-- `POST /api/habits/{id}/logs`  
-  Create a log entry for a habit (date, value, note).
-
-- `GET /api/habits/{id}/logs?from=YYYY-MM-DD&to=YYYY-MM-DD`  
-  Get logs for a habit in a date range.
+- `GET /api/habits` – List all habits
+- `GET /api/habits/{id}` – Get a specific habit
+- `POST /api/habits` – Create a new habit
+- `PUT /api/habits/{id}` – Update a habit
+- `DELETE /api/habits/{id}` – Delete a habit
+- `POST /api/habits/{id}/logs` – Create a log entry for a habit
+- `GET /api/habits/{id}/logs?from=&to=` – Get logs for a habit in a date range
 
 #### Health Metrics
 
-- `POST /api/health-metrics`  
-  Log a new health metric entry.
-
-- `GET /api/health-metrics?from=&to=`  
-  List health metrics in range.
+- `POST /api/health-metrics` – Log a new health metric entry
+- `GET /api/health-metrics?from=&to=` – List health metrics in range
 
 #### Activity Logs
 
-- `GET /api/activity-logs?from=&to=&type=`  
-- `POST /api/activity-logs`  
-  Create a new activity log (optionally linked to a calendar event).
+- `GET /api/activities` – List all activity logs
+- `GET /api/activities/today` – Get today's activities
+- `GET /api/activities/date/{date}` – Get activities for specific date
+- `GET /api/activities/range?start=&end=` – Get activities in date range
+- `GET /api/activities/weekly-breakdown` – Get weekly breakdown by category
+- `POST /api/activities` – Create a new activity log
+- `POST /api/activities/quick` – Quick log (minimal fields)
+
+#### Tasks (NEW ✅)
+
+- `GET /api/tasks` – List all tasks
+- `GET /api/tasks/{id}` – Get a specific task
+- `POST /api/tasks` – Create a new task
+- `PUT /api/tasks/{id}` – Update a task
+- `DELETE /api/tasks/{id}` – Delete a task
+- `GET /api/tasks/status/{status}` – Get tasks by status
+- `GET /api/tasks/priority/{priority}` – Get tasks by priority
+- `GET /api/tasks/overdue` – Get overdue tasks
+
+#### Expenses (NEW ✅)
+
+- `GET /api/expenses` – List all expenses
+- `GET /api/expenses/{id}` – Get a specific expense
+- `POST /api/expenses` – Create a new expense
+- `PUT /api/expenses/{id}` – Update an expense
+- `DELETE /api/expenses/{id}` – Delete an expense
+- `GET /api/expenses/category/{category}` – Get expenses by category
+- `GET /api/expenses/range?start=&end=` – Get expenses in date range
+- `GET /api/expenses/summary?start=&end=` – Get expense summary by category
+
+#### Courses (NEW ✅)
+
+- `GET /api/courses` – List all courses
+- `GET /api/courses/{id}` – Get a specific course
+- `POST /api/courses` – Create a new course
+- `PUT /api/courses/{id}` – Update a course
+- `DELETE /api/courses/{id}` – Delete a course
+- `GET /api/courses/{id}/exams` – Get exams for a course
+
+#### Exams (NEW ✅)
+
+- `GET /api/exams` – List all exams
+- `GET /api/exams/{id}` – Get a specific exam
+- `POST /api/exams` – Create a new exam
+- `PUT /api/exams/{id}` – Update an exam
+- `DELETE /api/exams/{id}` – Delete an exam
+- `GET /api/exams/upcoming` – Get upcoming exams
+
+#### Goals (NEW ✅)
+
+- `GET /api/goals` – List all goals
+- `GET /api/goals/{id}` – Get a specific goal
+- `POST /api/goals` – Create a new goal
+- `PUT /api/goals/{id}` – Update a goal
+- `DELETE /api/goals/{id}` – Delete a goal
+- `GET /api/goals/{id}/progress` – Get progress entries for a goal
+- `POST /api/goals/{id}/progress` – Add progress entry
 
 ---
 
 ### 5.2 Calendar Service APIs
 
-- `GET /api/calendar-events?from=&to=`  
-  List calendar events in a period.
-
-- `POST /api/calendar-events`  
-  Insert a calendar event manually.
-
-- `POST /api/calendar/sync?from=&to=`  
-  Trigger synchronization with Google Calendar  
-  (first version may read from a local JSON file / mocked source).
+- `GET /api/calendar/events?from=&to=` – List calendar events in a period
+- `POST /api/calendar/events` – Insert a calendar event manually
+- `GET /api/calendar/events/export?from=&to=` – **Export to ICS format (NEW ✅)**
+- `POST /api/calendar/events/check-conflicts` – **Check for conflicts (NEW ✅)**
+- `POST /api/calendar/events/safe` – **Create event only if no conflicts (NEW ✅)**
 
 ---
 
-### 5.3 Analytics Service APIs
+### 5.3 AI Intake Service APIs (NEW ✅)
 
-- `GET /api/analytics/habits/weekly?habitId=&weekStart=`  
-  Returns weekly completion statistics for a habit.
+- `POST /api/intake/daily-log` – Process AI-generated daily log JSON
+- `GET /api/intake/schema` – Get expected JSON schema for AI
 
-- `GET /api/analytics/time-by-activity?from=&to=`  
-  Aggregated duration by `activity_type`.
+**Example Daily Log JSON:**
+```json
+{
+  "date": "2025-12-05",
+  "health": {
+    "sleepHours": 7.5,
+    "moodScore": 7,
+    "stressLevel": 4,
+    "energyLevel": 8
+  },
+  "activities": [
+    { "type": "EXERCISE", "durationMinutes": 60 }
+  ],
+  "habits": [
+    { "habitName": "Exercise", "value": 1 }
+  ],
+  "expenses": [
+    { "amount": 12.50, "category": "FOOD" }
+  ],
+  "tasks": [
+    { "title": "Complete report", "priority": "HIGH" }
+  ]
+}
+```
 
-- `GET /api/analytics/health/trends?from=&to=`  
-  Basic trend data (e.g., avg mood/stress per day).
+---
+
+### 5.4 Analytics Service APIs
+
+### 5.4 Analytics Service APIs
+
+- `GET /api/analytics/habits/weekly?habitId=&weekStart=` – Weekly completion stats
+- `GET /api/analytics/time-by-activity?from=&to=` – Aggregated duration by activity type
+- `GET /api/analytics/health/trends?from=&to=` – Health trend data
+- `GET /api/analytics/dashboard` – **Full dashboard with all metrics (NEW ✅)**
 
 You can start with simple SQL `GROUP BY` queries and enrich later.
 

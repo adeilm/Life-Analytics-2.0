@@ -2,7 +2,7 @@ package com.dali.lifeanalytics.tracking.controller;
 
 import com.dali.lifeanalytics.tracking.entity.Course;
 import com.dali.lifeanalytics.tracking.service.CourseService;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

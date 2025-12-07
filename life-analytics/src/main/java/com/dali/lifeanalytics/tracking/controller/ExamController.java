@@ -2,7 +2,7 @@ package com.dali.lifeanalytics.tracking.controller;
 
 import com.dali.lifeanalytics.tracking.entity.Exam;
 import com.dali.lifeanalytics.tracking.service.ExamService;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

@@ -31,7 +31,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>2.7.18</version>
+        <version>3.2.5</version>
         <relativePath/> <!-- lookup parent from Maven Central -->
     </parent>
 
@@ -39,10 +39,10 @@
          3. PROPERTIES
          ═══════════════════════════════════════════════════════════════════
          java.version : Tells the compiler which Java version to target.
-                        Spring Boot 2.7.x works with Java 11+.
+                        Spring Boot 3.x requires Java 17+.
     -->
     <properties>
-        <java.version>11</java.version>
+        <java.version>17</java.version>
     </properties>
 
     <!-- ═══════════════════════════════════════════════════════════════════

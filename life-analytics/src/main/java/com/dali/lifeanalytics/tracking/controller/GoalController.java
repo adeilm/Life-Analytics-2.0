@@ -3,7 +3,7 @@ package com.dali.lifeanalytics.tracking.controller;
 import com.dali.lifeanalytics.tracking.entity.Goal;
 import com.dali.lifeanalytics.tracking.entity.GoalProgress;
 import com.dali.lifeanalytics.tracking.service.GoalService;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

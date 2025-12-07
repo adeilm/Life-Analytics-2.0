@@ -1,7 +1,7 @@
 package com.dali.lifeanalytics.calendar;
 
 import com.dali.lifeanalytics.calendar.dto.ConflictCheckResultDto;
-import javax.validation.Valid;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
