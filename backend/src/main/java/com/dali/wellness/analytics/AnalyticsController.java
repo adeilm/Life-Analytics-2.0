@@ -1,6 +1,5 @@
 package com.dali.wellness.analytics;
 
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,10 +17,13 @@ import java.util.Map;
  */
 @RestController
 @RequestMapping("/api/analytics")
-@RequiredArgsConstructor
 public class AnalyticsController {
 
     private final AnalyticsService analyticsService;
+
+    public AnalyticsController(AnalyticsService analyticsService) {
+        this.analyticsService = analyticsService;
+    }
 
     /**
      * GET /api/analytics/habits/weekly

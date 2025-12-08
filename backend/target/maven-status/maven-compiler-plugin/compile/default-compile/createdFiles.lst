@@ -5,7 +5,6 @@ com\dali\wellness\tracking\service\HabitService.class
 com\dali\wellness\WellnessTrackerApplication.class
 com\dali\wellness\config\HealthCheckController.class
 com\dali\wellness\tracking\controller\HealthMetricController.class
-com\dali\wellness\tracking\entity\HabitLog$HabitLogBuilder.class
 com\dali\wellness\tracking\entity\HabitLog.class
 com\dali\wellness\tracking\repository\HabitLogRepository.class
 com\dali\wellness\analytics\AnalyticsService.class
@@ -16,6 +15,4 @@ com\dali\wellness\config\package-info.class
 com\dali\wellness\tracking\package-info.class
 com\dali\wellness\tracking\entity\Habit.class
 com\dali\wellness\tracking\repository\HealthMetricRepository.class
-com\dali\wellness\tracking\entity\Habit$HabitBuilder.class
 com\dali\wellness\tracking\controller\HabitController.class
-com\dali\wellness\tracking\entity\HealthMetric$HealthMetricBuilder.class

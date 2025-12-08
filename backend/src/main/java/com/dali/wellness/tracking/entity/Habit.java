@@ -3,11 +3,6 @@ package com.dali.wellness.tracking.entity;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 /**
@@ -30,10 +25,6 @@ import java.time.LocalDateTime;
  */
 @Entity
 @Table(name = "habit")
-@Data                   // Lombok: generates getters, setters, equals, hashCode, toString
-@Builder                // Lombok: enables builder pattern: Habit.builder().name("X").build()
-@NoArgsConstructor      // Lombok: required by JPA (no-arg constructor)
-@AllArgsConstructor     // Lombok: constructor with all fields (used by builder)
 public class Habit {
 
     @Id
@@ -65,6 +56,57 @@ public class Habit {
      */
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    public Habit() {
+    }
+
+    public Habit(Long id, String name, String category, Integer targetPerWeek, LocalDateTime createdAt) {
+        this.id = id;
+        this.name = name;
+        this.category = category;
+        this.targetPerWeek = targetPerWeek;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCategory() {
+        return category;
+    }
+
+    public void setCategory(String category) {
+        this.category = category;
+    }
+
+    public Integer getTargetPerWeek() {
+        return targetPerWeek;
+    }
+
+    public void setTargetPerWeek(Integer targetPerWeek) {
+        this.targetPerWeek = targetPerWeek;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     /**
      * JPA lifecycle callback: set createdAt before INSERT.

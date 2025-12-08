@@ -2,11 +2,6 @@ package com.dali.wellness.tracking.entity;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -29,10 +24,6 @@ import java.time.LocalDateTime;
 @Table(name = "habit_log", indexes = {
     @Index(name = "idx_habit_log_habit_date", columnList = "habit_id, log_date")
 })
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class HabitLog {
 
     @Id
@@ -63,7 +54,6 @@ public class HabitLog {
      *   - For duration habits: minutes (e.g., 30 min exercise)
      *   - For boolean habits: 1 = done, 0 = skipped
      */
-    @Builder.Default
     private Integer value = 1;
 
     /**
@@ -78,6 +68,66 @@ public class HabitLog {
      */
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
+
+    public HabitLog() {
+    }
+
+    public HabitLog(Long id, Habit habit, LocalDate logDate, Integer value, String note, LocalDateTime createdAt) {
+        this.id = id;
+        this.habit = habit;
+        this.logDate = logDate;
+        this.value = value;
+        this.note = note;
+        this.createdAt = createdAt;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Habit getHabit() {
+        return habit;
+    }
+
+    public void setHabit(Habit habit) {
+        this.habit = habit;
+    }
+
+    public LocalDate getLogDate() {
+        return logDate;
+    }
+
+    public void setLogDate(LocalDate logDate) {
+        this.logDate = logDate;
+    }
+
+    public Integer getValue() {
+        return value;
+    }
+
+    public void setValue(Integer value) {
+        this.value = value;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
 
     @PrePersist
     protected void onCreate() {

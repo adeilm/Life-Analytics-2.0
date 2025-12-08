@@ -5,7 +5,6 @@ import com.dali.wellness.tracking.entity.HealthMetric;
 import com.dali.wellness.tracking.repository.HabitLogRepository;
 import com.dali.wellness.tracking.repository.HabitRepository;
 import com.dali.wellness.tracking.repository.HealthMetricRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -25,12 +24,17 @@ import java.util.stream.Collectors;
  * Correlates sleep, mood, and habits.
  */
 @Service
-@RequiredArgsConstructor
 public class AnalyticsService {
 
     private final HabitRepository habitRepository;
     private final HabitLogRepository habitLogRepository;
     private final HealthMetricRepository healthMetricRepository;
+
+    public AnalyticsService(HabitRepository habitRepository, HabitLogRepository habitLogRepository, HealthMetricRepository healthMetricRepository) {
+        this.habitRepository = habitRepository;
+        this.habitLogRepository = habitLogRepository;
+        this.healthMetricRepository = healthMetricRepository;
+    }
 
     /**
      * Weekly habit completion report.

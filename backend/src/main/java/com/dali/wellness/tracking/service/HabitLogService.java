@@ -1,10 +1,8 @@
 package com.dali.wellness.tracking.service;
 
-import com.dali.wellness.tracking.entity.Habit;
 import com.dali.wellness.tracking.entity.HabitLog;
 import com.dali.wellness.tracking.repository.HabitLogRepository;
 import com.dali.wellness.tracking.repository.HabitRepository;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,11 +16,15 @@ import java.util.Optional;
  * Business logic for habit logging.
  */
 @Service
-@RequiredArgsConstructor
 public class HabitLogService {
 
     private final HabitLogRepository habitLogRepository;
     private final HabitRepository habitRepository;
+
+    public HabitLogService(HabitLogRepository habitLogRepository, HabitRepository habitRepository) {
+        this.habitLogRepository = habitLogRepository;
+        this.habitRepository = habitRepository;
+    }
 
     /**
      * Get all logs for a habit.
@@ -74,11 +76,10 @@ public class HabitLogService {
     public Optional<HabitLog> quickLog(Long habitId) {
         return habitRepository.findById(habitId)
                 .map(habit -> {
-                    HabitLog log = HabitLog.builder()
-                            .habit(habit)
-                            .logDate(LocalDate.now())
-                            .value(1)
-                            .build();
+                    HabitLog log = new HabitLog();
+                    log.setHabit(habit);
+                    log.setLogDate(LocalDate.now());
+                    log.setValue(1);
                     return habitLogRepository.save(log);
                 });
     }

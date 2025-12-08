@@ -4,11 +4,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 
 /**
@@ -33,10 +28,6 @@ import java.time.LocalDateTime;
 @Table(name = "health_metric", indexes = {
     @Index(name = "idx_health_metric_recorded", columnList = "recorded_at")
 })
-@Data
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
 public class HealthMetric {
 
     @Id
@@ -91,6 +82,75 @@ public class HealthMetric {
      */
     @Column(length = 1000)
     private String note;
+
+    public HealthMetric() {
+    }
+
+    public HealthMetric(Long id, LocalDateTime recordedAt, Double sleepHours, Integer moodScore, Integer stressLevel, Integer energyLevel, String note) {
+        this.id = id;
+        this.recordedAt = recordedAt;
+        this.sleepHours = sleepHours;
+        this.moodScore = moodScore;
+        this.stressLevel = stressLevel;
+        this.energyLevel = energyLevel;
+        this.note = note;
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getRecordedAt() {
+        return recordedAt;
+    }
+
+    public void setRecordedAt(LocalDateTime recordedAt) {
+        this.recordedAt = recordedAt;
+    }
+
+    public Double getSleepHours() {
+        return sleepHours;
+    }
+
+    public void setSleepHours(Double sleepHours) {
+        this.sleepHours = sleepHours;
+    }
+
+    public Integer getMoodScore() {
+        return moodScore;
+    }
+
+    public void setMoodScore(Integer moodScore) {
+        this.moodScore = moodScore;
+    }
+
+    public Integer getStressLevel() {
+        return stressLevel;
+    }
+
+    public void setStressLevel(Integer stressLevel) {
+        this.stressLevel = stressLevel;
+    }
+
+    public Integer getEnergyLevel() {
+        return energyLevel;
+    }
+
+    public void setEnergyLevel(Integer energyLevel) {
+        this.energyLevel = energyLevel;
+    }
+
+    public String getNote() {
+        return note;
+    }
+
+    public void setNote(String note) {
+        this.note = note;
+    }
 
     @PrePersist
     protected void onCreate() {

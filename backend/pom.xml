@@ -94,17 +94,6 @@
         </dependency>
 
         <!-- ────────────────────────────────────────────────────────────────
-             LOMBOK
-             Reduces boilerplate: @Data, @Builder, @NoArgsConstructor, etc.
-             Requires Lombok plugin in your IDE (VS Code, IntelliJ).
-        -->
-        <dependency>
-            <groupId>org.projectlombok</groupId>
-            <artifactId>lombok</artifactId>
-            <optional>true</optional>
-        </dependency>
-
-        <!-- ────────────────────────────────────────────────────────────────
              TESTING
              Provides: JUnit 5, Mockito, Spring Test, @SpringBootTest
         -->
@@ -127,15 +116,6 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
-                <configuration>
-                    <!-- Exclude Lombok from the final JAR (it's compile-time only) -->
-                    <excludes>
-                        <exclude>
-                            <groupId>org.projectlombok</groupId>
-                            <artifactId>lombok</artifactId>
-                        </exclude>
-                    </excludes>
-                </configuration>
             </plugin>
         </plugins>
     </build>
