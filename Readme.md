@@ -140,11 +140,10 @@ curl http://localhost:8080/api/analytics/dashboard
 ```
 life-analytics/
 ├── src/main/java/com/dali/lifeanalytics/
-│   ├── LifeAnalyticsApplication.java   # Main entry point
+│   ├── WellnessTrackerApplication.java   # Main entry point
 │   ├── analytics/                       # Analytics module
 │   │   ├── AnalyticsController.java
-│   │   ├── AnalyticsService.java
-│   │   └── dto/                        # Data transfer objects
+│   │   └── AnalyticsService.java
 │   ├── config/                          # Configuration
 │   │   └── HealthCheckController.java
 │   └── tracking/                        # Core tracking module
