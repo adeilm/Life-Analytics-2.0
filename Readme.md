@@ -6,9 +6,13 @@ A simple backend to **correlate sleep and mood with daily habits**.
 
 ## Tech Stack
 
+### Backend
 - **Java 17** + **Spring Boot 3.2.5**
 - **MySQL** (relational database)
 - **Maven** (build tool)
+
+### Frontend
+- **Python** + **Streamlit** (Simple web UI)
 
 ---
 
@@ -106,14 +110,22 @@ spring.datasource.password=your_password
 spring.jpa.hibernate.ddl-auto=update
 ```
 
-### 3. Run the Application
+### 3. Run the Backend
 
 ```bash
-cd life-analytics
+cd backend
 mvn spring-boot:run
 ```
 
-### 4. Test the API
+### 4. Run the Frontend
+
+```bash
+cd frontend
+pip install streamlit requests
+streamlit run app.py
+```
+
+### 5. Test the API
 
 ```bash
 # Health check
@@ -138,20 +150,17 @@ curl http://localhost:8080/api/analytics/dashboard
 ## Project Structure
 
 ```
-life-analytics/
-├── src/main/java/com/dali/lifeanalytics/
-│   ├── WellnessTrackerApplication.java   # Main entry point
-│   ├── analytics/                       # Analytics module
-│   │   ├── AnalyticsController.java
-│   │   └── AnalyticsService.java
-│   ├── config/                          # Configuration
-│   │   └── HealthCheckController.java
-│   └── tracking/                        # Core tracking module
-│       ├── controller/                  # REST controllers
-│       ├── entity/                      # JPA entities
-│       ├── repository/                  # Data access
-│       └── service/                     # Business logic
-└── pom.xml                              # Maven configuration
+Life Analytics 2.0/
+├── backend/                             # Spring Boot Backend
+│   ├── src/main/java/com/dali/wellness/
+│   │   ├── WellnessTrackerApplication.java
+│   │   ├── analytics/
+│   │   ├── config/
+│   │   └── tracking/
+│   └── pom.xml
+├── frontend/                            # Streamlit Frontend
+│   └── app.py
+└── Readme.md
 ```
 
 ---
