@@ -1,0 +1,13 @@
+@echo off
+echo Starting Life Analytics 2.0...
+
+echo Starting Backend...
+start "Backend" cmd /c "cd backend && mvn spring-boot:run"
+
+echo Waiting for Backend to initialize...
+timeout /t 10
+
+echo Starting Frontend...
+start "Frontend" cmd /c "cd frontend && streamlit run app.py"
+
+echo All services started!

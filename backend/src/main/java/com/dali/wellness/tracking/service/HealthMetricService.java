@@ -1,16 +1,16 @@
 package com.dali.wellness.tracking.service;
 
-import com.dali.wellness.tracking.entity.HealthMetric;
-import com.dali.wellness.tracking.repository.HealthMetricRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
+
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.dali.wellness.tracking.entity.HealthMetric;
+import com.dali.wellness.tracking.repository.HealthMetricRepository;
 
 /**
  * HealthMetric Service
@@ -18,10 +18,13 @@ import java.util.Optional;
  * Business logic for health metrics tracking.
  */
 @Service
-@RequiredArgsConstructor
 public class HealthMetricService {
 
     private final HealthMetricRepository healthMetricRepository;
+
+    public HealthMetricService(HealthMetricRepository healthMetricRepository) {
+        this.healthMetricRepository = healthMetricRepository;
+    }
 
     /**
      * Get all health metrics (most recent first).

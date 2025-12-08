@@ -1,12 +1,5 @@
 package com.dali.wellness.analytics;
 
-import com.dali.wellness.tracking.entity.Habit;
-import com.dali.wellness.tracking.entity.HealthMetric;
-import com.dali.wellness.tracking.repository.HabitLogRepository;
-import com.dali.wellness.tracking.repository.HabitRepository;
-import com.dali.wellness.tracking.repository.HealthMetricRepository;
-import org.springframework.stereotype.Service;
-
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -17,6 +10,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import org.springframework.stereotype.Service;
+
+import com.dali.wellness.tracking.entity.Habit;
+import com.dali.wellness.tracking.entity.HealthMetric;
+import com.dali.wellness.tracking.repository.HabitLogRepository;
+import com.dali.wellness.tracking.repository.HabitRepository;
+import com.dali.wellness.tracking.repository.HealthMetricRepository;
 
 /**
  * Analytics Service - Wellness Tracker
@@ -54,7 +55,8 @@ public class AnalyticsService {
             long completed = habitLogRepository.countByHabitIdAndDateRange(
                     habit.getId(), weekStart, weekEnd);
 
-            int target = habit.getTargetPerWeek() != null ? habit.getTargetPerWeek() : 7;
+            Integer targetVal = habit.getTargetPerWeek();
+            int target = targetVal != null ? targetVal : 7;
             double rate = target > 0 ? Math.min(1.0, (double) completed / target) : 1.0;
 
             int streak = calculateStreak(habit.getId());

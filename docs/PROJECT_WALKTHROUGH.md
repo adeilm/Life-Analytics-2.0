@@ -17,16 +17,15 @@ This project follows the standard **Layered Architecture** common in Spring Boot
 
 ## 2. Configuration Files ⚙️
 
-### `pom.xml`
+### `backend/pom.xml`
 **"Project Object Model"** - The recipe for Maven.
 - **What it does**: Lists all the libraries (dependencies) the project needs.
 - **Key Dependencies**:
     - `spring-boot-starter-web`: Allows us to build REST APIs.
     - `spring-boot-starter-data-jpa`: Allows us to talk to the database easily.
     - `mysql-connector-j`: The driver to connect to MySQL.
-    - `lombok`: A helper library that auto-generates getters, setters, and constructors (so we don't have to write them).
 
-### `src/main/resources/application.properties`
+### `backend/src/main/resources/application.properties`
 **The Control Panel.**
 - **What it does**: Stores configuration settings.
 - **Key Settings**:
@@ -38,7 +37,7 @@ This project follows the standard **Layered Architecture** common in Spring Boot
 
 ## 3. The Entry Point 🚪
 
-### `src/main/java/com/dali/wellness/WellnessTrackerApplication.java`
+### `backend/src/main/java/com/dali/wellness/WellnessTrackerApplication.java`
 **The Main Class.**
 - **What it does**: This is where the application starts.
 - **Key Annotation**: `@SpringBootApplication`. This tells Spring: "This is a Spring app, please scan all the files in this package and wire them together."

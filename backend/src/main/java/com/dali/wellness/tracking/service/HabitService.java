@@ -1,13 +1,13 @@
 package com.dali.wellness.tracking.service;
 
-import com.dali.wellness.tracking.entity.Habit;
-import com.dali.wellness.tracking.repository.HabitRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.Optional;
+
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Optional;
+import com.dali.wellness.tracking.entity.Habit;
+import com.dali.wellness.tracking.repository.HabitRepository;
 
 /**
  * Habit Service
@@ -21,11 +21,14 @@ import java.util.Optional;
  *   @Transactional     – Wraps methods in a DB transaction (rollback on exception).
  */
 @Service
-@RequiredArgsConstructor
 public class HabitService {
 
-    // Injected by Spring via constructor (thanks to @RequiredArgsConstructor)
+    // Injected by Spring via constructor
     private final HabitRepository habitRepository;
+
+    public HabitService(HabitRepository habitRepository) {
+        this.habitRepository = habitRepository;
+    }
 
     // ─────────────────────────────────────────────────────────────────────────
     // READ OPERATIONS

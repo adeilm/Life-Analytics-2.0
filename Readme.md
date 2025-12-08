@@ -10,6 +10,7 @@ A simple backend to **correlate sleep and mood with daily habits**.
 - **Java 17** + **Spring Boot 3.2.5**
 - **MySQL** (relational database)
 - **Maven** (build tool)
+- *Note: Lombok has been removed for better compatibility.*
 
 ### Frontend
 - **Python** + **Streamlit** (Simple web UI)
