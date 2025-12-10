@@ -17,16 +17,17 @@ import java.util.Map;
  *   GET /info  – Returns app info with timestamp
  */
 @RestController
+@RequestMapping("/api")
 public class HealthCheckController {
 
     /**
-     * Simple ping endpoint.
+     * Simple health check endpoint.
      * Use this to verify the app is up.
      *
-     * curl http://localhost:8080/ping
+     * curl http://localhost:8080/api/health
      */
-    @GetMapping("/ping")
-    public ResponseEntity<String> ping() {
+    @GetMapping("/health")
+    public ResponseEntity<String> health() {
         return ResponseEntity.ok("OK");
     }
 

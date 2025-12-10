@@ -11,6 +11,7 @@ C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dal
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\tracking\package-info.java
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\config\HealthCheckController.java
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\tracking\repository\HabitRepository.java
+C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\config\CorsConfig.java
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\analytics\AnalyticsController.java
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\WellnessTrackerApplication.java
 C:\Users\HP\DALI\Shared\Project\Life Analytics 2.0\backend\src\main\java\com\dali\wellness\tracking\controller\HabitController.java
