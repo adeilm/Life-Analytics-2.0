@@ -36,7 +36,9 @@ htmlcov/
 .pytest_cache/
 .mypy_cache/
 .python-version
-.streamlit/
+# Ignore Streamlit secrets but keep config
+.streamlit/*
+!.streamlit/config.toml
 
 # Environments and secrets
 .env

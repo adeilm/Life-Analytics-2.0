@@ -1,10 +1,18 @@
 package com.dali.wellness.tracking.entity;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Index;
+import jakarta.persistence.PrePersist;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.PositiveOrZero;
-import java.time.LocalDateTime;
 
 /**
  * HealthMetric Entity
@@ -50,29 +58,29 @@ public class HealthMetric {
     private Double sleepHours;
 
     /**
-     * Mood score (1-5).
-     * 1 = Very bad, 5 = Excellent
+     * Mood score (1-10).
+     * 1 = Very bad, 10 = Excellent
      */
-    @Min(value = 1, message = "Mood score must be between 1 and 5")
-    @Max(value = 5, message = "Mood score must be between 1 and 5")
+    @Min(value = 1, message = "Mood score must be between 1 and 10")
+    @Max(value = 10, message = "Mood score must be between 1 and 10")
     @Column(name = "mood_score")
     private Integer moodScore;
 
     /**
-     * Stress level (1-5).
-     * 1 = Very low stress, 5 = Very high stress
+     * Stress level (1-10).
+     * 1 = Very low stress, 10 = Very high stress
      */
-    @Min(value = 1, message = "Stress level must be between 1 and 5")
-    @Max(value = 5, message = "Stress level must be between 1 and 5")
+    @Min(value = 1, message = "Stress level must be between 1 and 10")
+    @Max(value = 10, message = "Stress level must be between 1 and 10")
     @Column(name = "stress_level")
     private Integer stressLevel;
 
     /**
-     * Energy level (1-5).
-     * 1 = Exhausted, 5 = Very energetic
+     * Energy level (1-10).
+     * 1 = Exhausted, 10 = Very energetic
      */
-    @Min(value = 1, message = "Energy level must be between 1 and 5")
-    @Max(value = 5, message = "Energy level must be between 1 and 5")
+    @Min(value = 1, message = "Energy level must be between 1 and 10")
+    @Max(value = 10, message = "Energy level must be between 1 and 10")
     @Column(name = "energy_level")
     private Integer energyLevel;
 

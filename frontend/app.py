@@ -1,9 +1,8 @@
 import streamlit as st
-import requests
-from datetime import date
+from api_client import APIClient
 
-# Configuration
-API_BASE_URL = "http://localhost:8080/api"
+# Initialize API Client
+api = APIClient()
 
 st.set_page_config(
     page_title="Life Analytics 2.0",
@@ -11,62 +10,63 @@ st.set_page_config(
     layout="wide"
 )
 
-# --- Helper Functions ---
-def check_backend():
-    try:
-        response = requests.get(f"{API_BASE_URL}/health", timeout=2)
-        return response.status_code == 200
-    except:
-        return False
-
-def get_habits():
-    try:
-        return requests.get(f"{API_BASE_URL}/habits").json()
-    except:
-        return []
-
-def create_habit(name, category, target):
-    payload = {"name": name, "category": category, "targetPerWeek": target, "active": True}
-    return requests.post(f"{API_BASE_URL}/habits", json=payload)
-
-def log_habit(habit_id, note=""):
-    payload = {"value": 1, "note": note, "logDate": date.today().isoformat()}
-    return requests.post(f"{API_BASE_URL}/habits/{habit_id}/logs", json=payload)
-
-def log_health(sleep, mood, stress, energy, note):
-    payload = {
-        "sleepHours": sleep,
-        "moodScore": mood,
-        "stressLevel": stress,
-        "energyLevel": energy,
-        "note": note,
-        "recordedAt": date.today().isoformat()
-    }
-    return requests.post(f"{API_BASE_URL}/health-metrics", json=payload)
-
-def get_health_metrics():
-    try:
-        return requests.get(f"{API_BASE_URL}/health-metrics").json()
-    except:
-        return []
-
 # --- UI Layout ---
 
 st.title("🧘 Life Analytics 2.0")
 
 # Sidebar Status
-if check_backend():
+if api.check_health():
     st.sidebar.success("Backend Connected 🟢")
 else:
     st.sidebar.error("Backend Disconnected 🔴")
     st.sidebar.warning("Ensure Spring Boot is running on port 8080.")
 
 st.sidebar.header("Navigation")
-page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Health Metrics"])
+page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Health Metrics", "Database Viewer"])
 
 # --- Pages ---
 
-if page == "Dashboard":
+if page == "Database Viewer":
+    st.header("🗄️ Database Viewer")
+    st.write("View raw data from the database tables.")
+
+    tab1, tab2, tab3 = st.tabs(["Habits", "Habit Logs", "Health Metrics"])
+
+    with tab1:
+        st.subheader("Habits Table")
+        habits = api.get_habits()
+        if habits:
+            st.dataframe(habits)
+        else:
+            st.info("No habits found.")
+
+    with tab2:
+        st.subheader("Habit Logs Table")
+        all_logs = []
+        habits = api.get_habits()
+        if habits:
+            for habit in habits:
+                logs = api.get_habit_logs(habit['id'])
+                for log in logs:
+                    log['habitName'] = habit['name']
+                all_logs.extend(logs)
+            
+            if all_logs:
+                st.dataframe(all_logs)
+            else:
+                st.info("No habit logs found.")
+        else:
+            st.info("No habits found.")
+
+    with tab3:
+        st.subheader("Health Metrics Table")
+        metrics = api.get_health_metrics()
+        if metrics:
+            st.dataframe(metrics)
+        else:
+            st.info("No health metrics found.")
+
+elif page == "Dashboard":
     st.header("📊 Dashboard")
     
     if st.button("Refresh Data"):
@@ -74,34 +74,32 @@ if page == "Dashboard":
 
     # 1. Health Trends
     st.subheader("Health Trends (Averages)")
-    try:
-        trends = requests.get(f"{API_BASE_URL}/analytics/health/trend").json()
-        if trends:
-            col1, col2, col3, col4 = st.columns(4)
-            with col1:
-                st.metric("Avg Sleep", f"{trends.get('avgSleep', 0):.1f} hrs")
-            with col2:
-                st.metric("Avg Mood", f"{trends.get('avgMood', 0):.1f}/10")
-            with col3:
-                st.metric("Avg Stress", f"{trends.get('avgStress', 0):.1f}/10")
-            with col4:
-                st.metric("Avg Energy", f"{trends.get('avgEnergy', 0):.1f}/10")
-        else:
-            st.info("No health data available yet.")
-    except Exception as e:
-        st.error(f"Could not load health trends. {e}")
+    trends = api.get_health_trends()
+    if trends:
+        col1, col2, col3, col4 = st.columns(4)
+        with col1:
+            st.metric("Avg Sleep", f"{trends.get('avgSleep', 0):.1f} hrs")
+        with col2:
+            st.metric("Avg Mood", f"{trends.get('avgMood', 0):.1f}/10")
+        with col3:
+            st.metric("Avg Stress", f"{trends.get('avgStress', 0):.1f}/10")
+        with col4:
+            st.metric("Avg Energy", f"{trends.get('avgEnergy', 0):.1f}/10")
+    else:
+        st.info("No health data available yet.")
 
     # 2. Weekly Habit Progress
     st.subheader("Weekly Habit Progress")
-    try:
-        weekly = requests.get(f"{API_BASE_URL}/analytics/habits/weekly").json()
-        # Expected format: {"Run": 3, "Read": 5} or similar
-        if weekly:
-            st.bar_chart(weekly)
+    weekly_response = api.get_weekly_habits()
+    
+    if weekly_response and "habits" in weekly_response:
+        chart_data = {h["habitName"]: h["completedThisWeek"] for h in weekly_response["habits"]}
+        if chart_data:
+            st.bar_chart(chart_data)
         else:
-            st.info("No habit logs for this week.")
-    except Exception as e:
-        st.error(f"Could not load weekly data. {e}")
+            st.info("No active habits found.")
+    else:
+        st.info("No habit data available.")
 
 elif page == "Habits":
     st.header("✅ Habit Tracker")
@@ -109,7 +107,7 @@ elif page == "Habits":
     tab1, tab2 = st.tabs(["My Habits", "Create New"])
     
     with tab1:
-        habits = get_habits()
+        habits = api.get_habits()
         if not habits:
             st.info("No habits found. Create one in the next tab!")
         else:
@@ -120,8 +118,8 @@ elif page == "Habits":
                     col1, col2 = st.columns([1, 3])
                     with col1:
                         if st.button(f"Check-in (+1)", key=f"btn_{habit['id']}"):
-                            res = log_habit(habit['id'])
-                            if res.status_code in [200, 201]:
+                            res = api.log_habit(habit['id'])
+                            if res:
                                 st.success("Logged!")
                                 st.rerun()
                             else:
@@ -139,8 +137,8 @@ elif page == "Habits":
             
             if submitted:
                 if name:
-                    res = create_habit(name, category, target)
-                    if res.status_code in [200, 201]:
+                    res = api.create_habit(name, category, target)
+                    if res:
                         st.success(f"Created habit: {name}!")
                         st.rerun()
                     else:
@@ -168,16 +166,16 @@ elif page == "Health Metrics":
             
             submitted = st.form_submit_button("Log Metrics")
             if submitted:
-                res = log_health(sleep, mood, stress, energy, note)
-                if res.status_code in [200, 201]:
+                res = api.log_health(sleep, mood, stress, energy, note)
+                if res:
                     st.success("Health metrics logged successfully!")
                 else:
                     st.error("Failed to log metrics.")
     
     with tab2:
         st.subheader("Recent Logs")
-        metrics = get_health_metrics()
+        metrics = api.get_health_metrics()
         if metrics:
-            st.table(metrics)
+            st.dataframe(metrics)
         else:
             st.info("No health metrics recorded yet.")
