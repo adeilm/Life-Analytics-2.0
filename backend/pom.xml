@@ -66,6 +66,15 @@
         </dependency>
 
         <!-- ────────────────────────────────────────────────────────────────
+             SPRING WEBFLUX
+             Provides: WebClient for reactive/non-blocking HTTP requests
+        -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
+        <!-- ────────────────────────────────────────────────────────────────
              SPRING DATA JPA
              Provides: JpaRepository, @Entity, Hibernate as the JPA provider
         -->

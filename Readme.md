@@ -1,16 +1,17 @@
 # Wellness Tracker 🧘
 
-A simple backend to **correlate sleep and mood with daily habits**.
+A simple backend to **correlate sleep and mood with daily habits**, now powered by **AI Insights**.
 
 ---
 
 ## Tech Stack
 
 ### Backend
-- **Java 17** + **Spring Boot 3.2.5**
+- **Java 17** + **Spring Boot 3.5.8**
 - **MySQL** (relational database)
 - **Maven** (build tool)
-- *Note: Lombok has been removed for better compatibility.*
+- **Spring WebFlux** (Reactive WebClient for AI integration)
+- **Google Gemini API** (AI Insights)
 
 ### Frontend
 - **Python** + **Streamlit** (Simple web UI)
@@ -21,7 +22,7 @@ A simple backend to **correlate sleep and mood with daily habits**.
 
 > *"Track my habits, log my sleep/mood/energy, and see how they correlate."*
 
-Simple. Focused. A **personal wellness backend**.
+Simple. Focused. A **personal wellness backend** with an **AI Coach**.
 
 ---
 
@@ -32,10 +33,17 @@ Simple. Focused. A **personal wellness backend**.
 | **Habits** | Create habits, log daily completions, track streaks |
 | **Health Metrics** | Log sleep, mood, stress, energy levels |
 | **Analytics** | Weekly reports, trends, dashboard |
+| **AI Coach** | Personalized insights using Google Gemini 2.0 Flash |
 
 ---
 
 ## API Endpoints
+
+### AI Insights
+
+| Method | Endpoint | Description |
+|--------|----------|-------------|
+| GET | `/api/analytics/ai-insights` | Get personalized AI advice based on weekly data |
 
 ### Habits
 

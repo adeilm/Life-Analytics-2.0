@@ -20,21 +20,26 @@
 | Weekly Report | ✅ Done | Habit completion stats |
 | Health Trends | ✅ Done | Average metrics over time |
 | Dashboard | ✅ Done | Combined overview |
+| AI Coach | ✅ Done | Personalized insights via Gemini API |
 
 ---
 
 ## Tech Stack
 
 - **Java 17** (Zulu OpenJDK)
-- **Spring Boot 3.2.5**
+- **Spring Boot 3.5.8**
 - **MySQL 8.0**
 - **Maven**
+- **Google Gemini API**
 
 ---
 
 ## API Summary
 
-### Core Endpoints (15 total)
+### Core Endpoints (16 total)
+
+**AI Insights (1)**
+- `GET /api/analytics/ai-insights` - Get AI advice
 
 **Habits (7)**
 - `GET /api/habits` - List habits

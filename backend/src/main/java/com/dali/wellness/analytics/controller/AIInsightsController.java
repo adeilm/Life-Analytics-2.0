@@ -1,12 +1,13 @@
 package com.dali.wellness.analytics.controller;
 
-import com.dali.wellness.analytics.AnalyticsService;
-import com.dali.wellness.analytics.service.GeminiService;
+import java.util.Map;
+
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Map;
+import com.dali.wellness.analytics.AnalyticsService;
+import com.dali.wellness.analytics.service.GeminiService;
 
 @RestController
 @RequestMapping("/api/analytics")
@@ -28,7 +29,7 @@ public class AIInsightsController {
         // 2. Construct Prompt
         String prompt = constructPrompt(dashboardData);
 
-        // 3. Call Gemini
+        // 3. Call Gemini (now handles retries and fallbacks internally)
         String insight = geminiService.generateContent(prompt);
 
         // 4. Return Result
