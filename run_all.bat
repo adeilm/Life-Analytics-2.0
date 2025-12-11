@@ -1,6 +1,11 @@
 @echo off
 echo Starting Life Analytics 2.0...
 
+if exist secrets.local.bat (
+    echo Loading secrets...
+    call secrets.local.bat
+)
+
 echo Starting Backend...
 start "Backend" cmd /c "cd backend && "C:\Users\HP\.m2\wrapper\dists\apache-maven-3.9.11\d6d3cbd4012d4c1d840e93277aca316c\bin\mvn.cmd" spring-boot:run"
 

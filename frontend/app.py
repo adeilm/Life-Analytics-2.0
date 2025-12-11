@@ -22,7 +22,7 @@ else:
     st.sidebar.warning("Ensure Spring Boot is running on port 8080.")
 
 st.sidebar.header("Navigation")
-page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Health Metrics", "Database Viewer"])
+page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Health Metrics", "AI Coach", "Database Viewer"])
 
 # --- Pages ---
 
@@ -179,3 +179,13 @@ elif page == "Health Metrics":
             st.dataframe(metrics)
         else:
             st.info("No health metrics recorded yet.")
+
+elif page == "AI Coach":
+    st.header("🤖 AI Wellness Coach")
+    st.write("Get personalized insights based on your weekly data.")
+    
+    if st.button("Generate Insights"):
+        with st.spinner("Analyzing your data..."):
+            insight = api.get_ai_insights()
+            st.markdown("### 💡 Your Insights")
+            st.write(insight)

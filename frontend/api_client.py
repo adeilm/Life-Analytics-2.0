@@ -59,3 +59,8 @@ class APIClient:
     def get_weekly_habits(self):
         data = self._handle_response(requests.get(f"{self.base_url}/analytics/habits/weekly"))
         return data if isinstance(data, dict) else {}
+
+    def get_ai_insights(self):
+        """Fetches AI-generated insights from the backend."""
+        data = self._handle_response(requests.get(f"{self.base_url}/analytics/ai-insights"))
+        return data.get("insight") if isinstance(data, dict) else "Unable to generate insights."
