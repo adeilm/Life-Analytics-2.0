@@ -1,8 +1,11 @@
 package com.dali.wellness.analytics.service;
 
-import java.util.List;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Map;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -11,8 +14,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+import com.fasterxml.jackson.databind.JsonNode;
+
 @Service
 public class GeminiService {
+
+    private static final Logger logger = LoggerFactory.getLogger(GeminiService.class);
 
     @Value("${gemini.api.key}")
     private String apiKey;
@@ -28,48 +35,50 @@ public class GeminiService {
 
     public String generateContent(String prompt) {
         if (apiKey == null || apiKey.isEmpty()) {
+            logger.error("Gemini API Key is missing.");
             return "Error: Gemini API Key is missing.";
         }
 
         try {
-            // Construct the URL with the API key
             String url = apiUrl + "?key=" + apiKey;
 
-            // Construct the Request Body
-            // { "contents": [{ "parts": [{"text": "..."}] }] }
-            Map<String, Object> part = Map.of("text", prompt);
-            Map<String, Object> content = Map.of("parts", List.of(part));
-            Map<String, Object> requestBody = Map.of("contents", List.of(content));
+            // Construct Request Body safely
+            Map<String, Object> part = new HashMap<>();
+            part.put("text", prompt);
+            
+            Map<String, Object> content = new HashMap<>();
+            content.put("parts", Collections.singletonList(part));
+            
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("contents", Collections.singletonList(content));
 
-            // Set Headers
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_JSON);
 
             HttpEntity<Map<String, Object>> entity = new HttpEntity<>(requestBody, headers);
 
-            // Send Request
-            ResponseEntity<Map> response = restTemplate.postForEntity(url, entity, Map.class);
+            // Get response as JsonNode to avoid unchecked casts and raw types
+            ResponseEntity<JsonNode> response = restTemplate.postForEntity(url, entity, JsonNode.class);
+            JsonNode root = response.getBody();
 
-            // Parse Response
-            if (response.getBody() != null) {
-                Map<String, Object> body = response.getBody();
-                if (body.containsKey("candidates")) {
-                    List<Map<String, Object>> candidates = (List<Map<String, Object>>) body.get("candidates");
-                    if (!candidates.isEmpty()) {
-                        Map<String, Object> candidate = candidates.get(0);
-                        Map<String, Object> contentResponse = (Map<String, Object>) candidate.get("content");
-                        List<Map<String, Object>> parts = (List<Map<String, Object>>) contentResponse.get("parts");
-                        if (!parts.isEmpty()) {
-                            return (String) parts.get(0).get("text");
-                        }
+            if (root != null) {
+                JsonNode candidates = root.path("candidates");
+                if (candidates.isArray() && candidates.size() > 0) {
+                    JsonNode firstCandidate = candidates.get(0);
+                    JsonNode parts = firstCandidate.path("content").path("parts");
+                    if (parts.isArray() && parts.size() > 0) {
+                        return parts.get(0).path("text").asText();
                     }
                 }
             }
             return "No content generated.";
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (org.springframework.web.client.RestClientException e) {
+            logger.error("Error calling Gemini API", e);
             return "Error calling Gemini API: " + e.getMessage();
+        } catch (Exception e) {
+            logger.error("Unexpected error", e);
+            return "Unexpected error: " + e.getMessage();
         }
     }
 }
