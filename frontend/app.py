@@ -22,11 +22,66 @@ else:
     st.sidebar.warning("Ensure Spring Boot is running on port 8080.")
 
 st.sidebar.header("Navigation")
-page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Health Metrics", "AI Coach", "Database Viewer"])
+page = st.sidebar.radio("Go to", ["Dashboard", "Habits", "Tasks", "Health Metrics", "AI Coach", "Database Viewer"])
 
 # --- Pages ---
 
-if page == "Database Viewer":
+if page == "Tasks":
+    st.header("✅ Tasks & Deadlines")
+    
+    # Create Task Form
+    with st.expander("➕ Add New Task"):
+        with st.form("new_task_form"):
+            t_title = st.text_input("Title")
+            t_desc = st.text_area("Description")
+            t_date = st.date_input("Deadline Date")
+            t_time = st.time_input("Deadline Time")
+            submitted = st.form_submit_button("Create Task")
+            
+            if submitted:
+                deadline_iso = f"{t_date}T{t_time}"
+                res = api.create_task(t_title, t_desc, deadline_iso)
+                if res:
+                    st.success("Task created!")
+                    st.rerun()
+                else:
+                    st.error("Failed to create task.")
+
+    # List Tasks
+    tasks = api.get_tasks()
+    if tasks:
+        pending_tasks = [t for t in tasks if not t['completed']]
+        completed_tasks = [t for t in tasks if t['completed']]
+        
+        st.subheader(f"Pending Tasks ({len(pending_tasks)})")
+        for task in pending_tasks:
+            with st.container(border=True):
+                c1, c2, c3 = st.columns([4, 2, 2])
+                with c1:
+                    st.markdown(f"**{task['title']}**")
+                    st.caption(task.get('description', ''))
+                with c2:
+                    st.write(f"📅 {task['deadline'].replace('T', ' ')}")
+                with c3:
+                    if st.button("Complete", key=f"comp_{task['id']}"):
+                        api.update_task(task['id'], task['title'], task['description'], task['deadline'], True)
+                        st.rerun()
+                    
+                    if st.button("📅 Sync to Google", key=f"sync_{task['id']}"):
+                        res = api.sync_task_to_calendar(task['id'])
+                        if "http" in res:
+                            st.success(f"Synced! [View Event]({res})")
+                        else:
+                            st.error(res)
+
+        if completed_tasks:
+            with st.expander("Completed Tasks"):
+                for task in completed_tasks:
+                    st.write(f"✅ {task['title']}")
+    else:
+        st.info("No tasks found.")
+
+elif page == "Database Viewer":
     st.header("🗄️ Database Viewer")
     st.write("View raw data from the database tables.")
 

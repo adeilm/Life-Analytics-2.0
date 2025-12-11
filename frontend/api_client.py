@@ -78,3 +78,43 @@ class APIClient:
         """Fetches AI-generated insights from the backend."""
         data = self._handle_response(requests.get(f"{self.base_url}/analytics/ai-insights"))
         return data.get("insight") if isinstance(data, dict) else "Unable to generate insights."
+
+    # --- Task Management ---
+    def get_tasks(self):
+        """Fetches all tasks."""
+        data = self._handle_response(requests.get(f"{self.base_url}/tasks"))
+        return data if isinstance(data, list) else []
+
+    def create_task(self, title, description, deadline):
+        """Creates a new task."""
+        payload = {
+            "title": title,
+            "description": description,
+            "deadline": deadline, # ISO format string
+            "completed": False
+        }
+        return self._handle_response(requests.post(f"{self.base_url}/tasks", json=payload))
+
+    def update_task(self, task_id, title, description, deadline, completed):
+        """Updates an existing task."""
+        payload = {
+            "title": title,
+            "description": description,
+            "deadline": deadline,
+            "completed": completed
+        }
+        return self._handle_response(requests.put(f"{self.base_url}/tasks/{task_id}", json=payload))
+
+    def delete_task(self, task_id):
+        """Deletes a task."""
+        return self._handle_response(requests.delete(f"{self.base_url}/tasks/{task_id}"))
+
+    # --- Calendar Integration ---
+    def sync_task_to_calendar(self, task_id):
+        """Syncs a specific task to Google Calendar."""
+        # The backend returns a string (URL or error message)
+        try:
+            response = requests.post(f"{self.base_url}/calendar/sync-task/{task_id}")
+            return response.text
+        except Exception as e:
+            return f"Error: {e}"

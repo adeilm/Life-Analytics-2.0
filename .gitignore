@@ -48,6 +48,9 @@ htmlcov/
 *.local
 venv/
 .venv/
+secrets.local.bat
+credentials.json
+tokens/
 env/
 backend/.env
 backend/.env.*
