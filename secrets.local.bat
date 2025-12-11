@@ -1,2 +1,0 @@
-@echo off
-set GEMINI_API_KEY=AIzaSyBcjrzbfijYiab6oZo22YdDh5VycjWP854
